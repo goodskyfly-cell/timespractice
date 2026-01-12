@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>乘法練習單 - A4對稱修正版</title>
+    <style>
+        /* 強制 A4 設定 */
+        @page { 
+            size: A4; 
+            margin: 0; 
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                background: white !important; 
+                padding: 0 !important; 
+                margin: 0 !important; 
+                visibility: hidden; 
+            }
+            .worksheet { 
+                visibility: visible !important;
+                position: absolute; 
+                left: 0; 
+                top: 0;
+                width: 210mm !important; 
+                height: 297mm !important;
+                box-shadow: none !important; 
+                border: none !important;
+            }
+        }
+
+        body {
+            font-family: "Noto Sans TC", sans-serif;
+            background-color: #f0f2f5;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            padding: 10px; 
+            margin: 0;
+        }
+
+        .control-panel {
+            background: #fff; padding: 10px 20px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 5px;
+            display: flex; gap: 15px; align-items: center; z-index: 999;
+        }
+
+        /* 修正重點：對稱的 Padding */
+        .worksheet {
+            background: white; 
+            width: 210mm; 
+            height: 297mm;
+            padding: 12mm 15mm; /* 左右維持對稱的 15mm */
+            box-sizing: border-box;
+            display: flex; 
+            flex-direction: column; 
+            overflow: hidden;
+            margin: 0 auto; /* 水平置中 */
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 12px;
+            flex-shrink: 0;
+        }
+
+        /* 修正重點：平均分配欄寬 */
+        #mainGrid {
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* 5 欄均分，解決左多右少問題 */
+            grid-template-rows: repeat(10, 1fr); 
+            gap: 8px 10px; /* 增加題目間距 */
+            align-content: stretch;
+            width: 100%;
+        }
+
+        .problem-item {
+            display: flex; 
+            flex-direction: column;
+            border-bottom: 1px solid #f0f0f0; /* 加入底線方便視覺區隔 */
+            padding: 8px 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .problem-id { 
+            font-size: 11px; 
+            color: #888; 
+            align-self: flex-start;
+            font-family: sans-serif;
+        }
+
+        .math-row {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 19px; /* 微調字體以適應寬度 */
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .answer-box {
+            display: inline-block;
+            border: 1px dashed #bbb;
+            width: 42px;
+            height: 28px;
+            margin-left: 5px;
+        }
+
+        .equal-sign { margin: 0 4px; }
+
+        button { cursor: pointer; padding: 6px 15px; border-radius: 4px; border: none; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel no-print">
+        <label>範圍：1 到 <input type="number" id="maxNum" value="9" style="width:40px;"></label>
+        <button onclick="generate()" style="background:#007bff;">一鍵刷新題目</button>
+        <button onclick="window.print()" style="background:#28a745;">列印 A4</button>
+    </div>
+
+    <div class="worksheet">
+        <div class="header">
+            <h1 style="margin:0; font-size:24px;">乘法練習單 (50題橫式)</h1>
+            <div style="display:flex; gap:15px; font-size:16px;">
+                <div>____ 月 ____ 日</div>
+                <div style="border-bottom:1px solid #000; min-width:100px;">姓名：</div>
+            </div>
+        </div>
+        <div id="mainGrid"></div>
+    </div>
+
+    <script>
+        function generate() {
+            const max = parseInt(document.getElementById('maxNum').value);
+            const grid = document.getElementById('mainGrid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 50; i++) {
+                let a = Math.floor(Math.random() * max) + 1;
+                let b = Math.floor(Math.random() * 9) + 1;
+
+                const item = document.createElement('div');
+                item.className = 'problem-item';
+                
+                item.innerHTML = `
+                    <div class="problem-id">(${i})</div>
+                    <div class="math-row">
+                        <span>${a}×${b}</span>
+                        <span class="equal-sign">=</span>
+                        <div class="answer-box"></div>
+                    </div>
+                `;
+                grid.appendChild(item);
+            }
+        }
+        generate();
+    </script>
+</body>
+</html>
